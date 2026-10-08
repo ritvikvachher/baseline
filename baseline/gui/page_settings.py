@@ -1,4 +1,4 @@
-"""Settings: your name, the project, and the software CORELINE can launch."""
+"""Settings: your name, the project, and the software BASELINE can launch."""
 from __future__ import annotations
 
 import tkinter as tk
@@ -67,7 +67,7 @@ class SettingsPage(Page):
         self.drive_check = CheckBox(f, self.drive_var, "", command=self.save_drive)
         self.drive_check.pack(anchor="w", pady=(px(8), 0))
         label(f, "Shows the project as the same drive on every computer, so paths inside Houdini/Maya "
-                 "scenes work for everyone. Applies next time CORELINE opens.", Fonts.small, MUTED,
+                 "scenes work for everyone. Applies next time BASELINE opens.", Fonts.small, MUTED,
               wraplength=px(330), justify="left").pack(anchor="w", pady=(px(4), 0))
 
     # --- Refresh ----------------------------------------------------------
@@ -151,7 +151,7 @@ class SettingsPage(Page):
 
     def save_drive(self):
         settings.save_user_setting("use_drive", bool(self.drive_var.get()))
-        self.app.status("Saved. The drive letter setting applies next time CORELINE opens.")
+        self.app.status("Saved. The drive letter setting applies next time BASELINE opens.")
 
     def make_default(self, inst):
         defaults = settings.get_user_setting("default_versions", {})

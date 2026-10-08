@@ -1,17 +1,17 @@
-"""Makes the starter turntable template for CORELINE. Run once with hython:
+"""Makes the starter turntable template for BASELINE. Run once with hython:
 
     hython make_turntable_template.py <folder> [hdri file name]
 
 Writes <folder>/turntable_template.hipnc and <folder>/preview_asset.usda. The team then
 restyles the template in Houdini however they like, keeping these few things, which are
-what CORELINE looks for (they're also written in a sticky note inside the file):
+what BASELINE looks for (they're also written in a sticky note inside the file):
 
-  * a Reference node whose file is $CORELINE_ASSET   - CORELINE puts the asset (already
+  * a Reference node whose file is $BASELINE_ASSET   - BASELINE puts the asset (already
     spinning, standing on the ground at the origin) there
-  * a camera prim called turntable_cam                - CORELINE keeps its lens and angle but
+  * a camera prim called turntable_cam                - BASELINE keeps its lens and angle but
     moves it closer or further so each asset fits. Things under it (the grey and chrome
     balls) move with it, so they stay in the corner of the frame
-  * a render node called OUT_CORELINE_turntable       - CORELINE renders what reaches it,
+  * a render node called OUT_BASELINE_turntable       - BASELINE renders what reaches it,
     with its own frame range, samples and resolution
   * a material called clay                            - used on the asset for geo turntables
 """
@@ -21,19 +21,19 @@ import sys
 import hou
 from pxr import Gf, Sdf, Usd, UsdGeom
 
-NOTE = """CORELINE TURNTABLE TEMPLATE
+NOTE = """BASELINE TURNTABLE TEMPLATE
 
-Restyle this however you like. CORELINE needs just these:
- - CORELINE_ASSET: a Reference whose file is $CORELINE_ASSET
+Restyle this however you like. BASELINE needs just these:
+ - BASELINE_ASSET: a Reference whose file is $BASELINE_ASSET
    (with nothing set it shows preview_asset.usda so you can see the look)
- - a camera prim called turntable_cam: CORELINE keeps its lens and angle,
+ - a camera prim called turntable_cam: BASELINE keeps its lens and angle,
    and moves it nearer/further so each asset fits. Anything under it
    (the grey + chrome balls) stays in the same place in the frame.
- - a render node called OUT_CORELINE_turntable at the end
+ - a render node called OUT_BASELINE_turntable at the end
  - a material called clay (for geo turntables)
 
 The HDRI is $HIP/__HDRI__. Frames, samples and resolution come from
-CORELINE's Turntable dialog. Save as turntable_template.hipnc in this folder."""
+BASELINE's Turntable dialog. Save as turntable_template.hipnc in this folder."""
 
 # Balls: half a metre in front of the camera, so even small props never hide them,
 # placed in the lower-right corner of a 50 mm lens on a 16:9 frame.
@@ -90,10 +90,10 @@ def build(folder, hdri_name):
         chain.append(node)
         return node
 
-    asset = add("reference::2.0", "CORELINE_ASSET", num_files=1, primpath1="/turntable_asset")
-    # CORELINE sets $CORELINE_ASSET when it renders; opened by hand, the preview stand-in shows.
+    asset = add("reference::2.0", "BASELINE_ASSET", num_files=1, primpath1="/turntable_asset")
+    # BASELINE sets $BASELINE_ASSET when it renders; opened by hand, the preview stand-in shows.
     asset.parm("filepath1").setExpression(
-        'hou.getenv("CORELINE_ASSET") or hou.text.expandString("$HIP/preview_asset.usda")',
+        'hou.getenv("BASELINE_ASSET") or hou.text.expandString("$HIP/preview_asset.usda")',
         hou.exprLanguage.Python)
     add("cube", "ground", primpath="/studio/ground", t=(0, -0.01, 0), s=(40, 0.02, 40))
     # Karma's "Background" holdout: the ground shows the HDRI behind it but still catches shadows.
@@ -118,16 +118,16 @@ def build(folder, hdri_name):
         assign.parm(f"primpattern{i}").set(f"/cameras/turntable_cam/balls/{name}")
         assign.parm(f"matspecpath{i}").set(f"/materials/{name}")
     add("karmarendersettings", "render_settings", engine="xpu", camera="/cameras/turntable_cam",
-        samplesperpixel=64)  # resolution: CORELINE sets it when rendering
-    out = add("usdrender_rop", "OUT_CORELINE_turntable")
+        samplesperpixel=64)  # resolution: BASELINE sets it when rendering
+    out = add("usdrender_rop", "OUT_BASELINE_turntable")
     out.inputs()[0].setDisplayFlag(True)  # the render node itself is a ROP, which has no display flag
     stage.layoutChildren()
-    note = stage.createStickyNote("coreline_rules")
+    note = stage.createStickyNote("baseline_rules")
     note.setText(NOTE.replace("__HDRI__", hdri_name))
     note.setSize(hou.Vector2(6.5, 4.2))
     note.setPosition(chain[0].position() + hou.Vector2(4, 0))
 
-    # Check it composes: the asset, camera, balls and materials are where CORELINE expects.
+    # Check it composes: the asset, camera, balls and materials are where BASELINE expects.
     composed = out.inputs()[0].stage()
     for node in chain:
         for problem in node.errors() + node.warnings():

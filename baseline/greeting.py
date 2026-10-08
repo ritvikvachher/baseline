@@ -25,7 +25,7 @@ SLOT_GREETINGS = {
 @dataclass
 class Greeting:
     text: str           # "GOOD MORNING"
-    name: str = ""      # "RITVIK", or "" when CORELINE doesn't know a real name
+    name: str = ""      # "RITVIK", or "" when BASELINE doesn't know a real name
     badge: str = ""     # "12 DAYS": drawn as a red tag in front of the text
     slot: int = MORNING
 
@@ -43,14 +43,14 @@ def time_slot(now: datetime) -> int:
 
 def pick_greeting(now: datetime, name: Optional[str], last_seen: Optional[datetime],
                   delivery: Optional[date] = None) -> Greeting:
-    """`last_seen` is when this person last had CORELINE open (None = never)."""
+    """`last_seen` is when this person last had BASELINE open (None = never)."""
     slot = time_slot(now)
 
     def greet(text, badge=""):
         return Greeting(text, (name or "").upper(), badge, slot)
 
     if last_seen is None:
-        return greet("WELCOME TO CORELINE")
+        return greet("WELCOME TO BASELINE")
     days = (delivery - now.date()).days if delivery else None
     if days is not None and 1 <= days <= COUNTDOWN_DAYS:
         return greet("TO DELIVERY. LET'S GO", f"{days} DAY" if days == 1 else f"{days} DAYS")

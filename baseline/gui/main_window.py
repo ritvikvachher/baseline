@@ -1,4 +1,4 @@
-"""The CORELINE window: sidebar, top bar, pages, and opening the project."""
+"""The BASELINE window: sidebar, top bar, pages, and opening the project."""
 from __future__ import annotations
 
 import tkinter as tk
@@ -34,7 +34,7 @@ def open_project(real_root: Path) -> Tuple[Project, str]:
     current = drives.current_mappings().get(letter.strip().rstrip(":").upper())
     ours = current and (settings.is_project(current) or drives.same_path(current, settings.get_user_setting("mapped")))
     if not mapped and ours:
-        # The letter still points where CORELINE put it (another project, or a folder that was one):
+        # The letter still points where BASELINE put it (another project, or a folder that was one):
         # move it to this project. Other uses of the letter are left alone.
         drives.unmap_drive(letter)
         mapped, message = drives.map_drive(letter, real_root)
@@ -47,7 +47,7 @@ def open_project(real_root: Path) -> Tuple[Project, str]:
 def choose_project_folder(parent) -> Optional[Path]:
     """Ask for the project folder, offering to set one up if it isn't a project yet."""
     messagebox.showinfo(
-        "CORELINE - Project Folder",
+        "BASELINE - Project Folder",
         "Choose the film's project folder.\n\n"
         "This is the shared OneDrive folder that holds (or will hold) the assets and shots. "
         "You only need to do this once on each computer.",
@@ -58,9 +58,9 @@ def choose_project_folder(parent) -> Optional[Path]:
     root = drives.real_path(chosen)
     if not settings.is_project(root):
         if not messagebox.askyesno(
-                "CORELINE - Project Folder",
-                f"There's no CORELINE project in:\n{root}\n\n"
-                "Set one up here? This adds a coreline_project.json file (and 'assets' and 'shots' "
+                "BASELINE - Project Folder",
+                f"There's no BASELINE project in:\n{root}\n\n"
+                "Set one up here? This adds a baseline_project.json file (and 'assets' and 'shots' "
                 "folders if they're missing). Existing folders and files aren't moved or renamed.\n\n"
                 "(If your team already has a project, choose No and pick that folder instead.)",
                 parent=parent):
@@ -119,9 +119,9 @@ class MainWindow(tk.Tk):
         self.pending_open = None
         self.current_page = None
 
-        self.title(f"CORELINE {__version__}")
+        self.title(f"BASELINE {__version__}")
         try:
-            self.iconbitmap(default=str(ASSETS_DIR / "coreline.ico"))  # window, taskbar and dialogs
+            self.iconbitmap(default=str(ASSETS_DIR / "baseline.ico"))  # window, taskbar and dialogs
         except tk.TclError:
             pass
         width = min(px(1400), self.winfo_screenwidth() - px(40))
@@ -161,7 +161,7 @@ class MainWindow(tk.Tk):
         word = tk.Frame(brand, bg=SIDEBAR)
         word.pack(anchor="w", pady=(px(8), 0))
         tk.Frame(word, bg=RED, width=px(18), height=px(3)).pack(side="left", padx=(0, px(8)))
-        label(word, "CORELINE", (Fonts.panel_title[0], 15, "bold italic"), bg=SIDEBAR).pack(side="left")
+        label(word, "BASELINE", (Fonts.panel_title[0], 15, "bold italic"), bg=SIDEBAR).pack(side="left")
         separator(side).pack(fill="x")
 
         self.nav_items = {}
@@ -355,7 +355,7 @@ class MainWindow(tk.Tk):
             apps.launch(inst, self.app_config[inst.app], file,
                         self.project.context_env(entity, task, self.user), cwd=cwd)
         except OSError as e:
-            messagebox.showerror("CORELINE", f"Could not start {inst.display}:\n{e}", parent=self)
+            messagebox.showerror("BASELINE", f"Could not start {inst.display}:\n{e}", parent=self)
             return False
         where = f" for {entity.label} > {task}" if entity and task else ""
         self.status(f"Starting {inst.display}" + (f" with {file.name}" if file else "") + where + "...")
@@ -387,7 +387,7 @@ class MainWindow(tk.Tk):
             "New Scene",
             f"{inst.display} is starting.\n\nWhen it's open, use File > Save As and save to:\n\n{target}\n\n"
             "(This is already copied: just paste it into the file name box.)\n\n"
-            "Then press F5 in CORELINE to see the new file.", parent=self)
+            "Then press F5 in BASELINE to see the new file.", parent=self)
 
     def to_project_path(self, path: Path) -> Path:
         """A file picked via its full OneDrive path -> the same file on the project drive (X:/...)."""
@@ -413,8 +413,8 @@ class MainWindow(tk.Tk):
 
     def ask_name(self):
         """University logins are student IDs (s5707305); ask for a friendlier name for file names."""
-        form = FormDialog(self, "Welcome to CORELINE", [("user", "Your name", "", None)], ok_text="Save", intro=(
-            "What should CORELINE call you? It goes into your scene file names, e.g. "
+        form = FormDialog(self, "Welcome to BASELINE", [("user", "Your name", "", None)], ok_text="Save", intro=(
+            "What should BASELINE call you? It goes into your scene file names, e.g. "
             "sh010_anim_v003_ritvik.hip. Use the same short name on every computer."))
         self.set_user((form.result or {}).get("user") or self.user)
         self.status(f"Hi {self.user}! You can change your name any time in Settings.")
@@ -444,14 +444,14 @@ class MainWindow(tk.Tk):
 
     def on_close(self):
         if self.pages["farm"].has_active_worker():
-            if not messagebox.askyesno("CORELINE", "This PC is rendering farm jobs.\n\n"
-                                       "Closing CORELINE stops that (its current chunk goes back to the farm "
+            if not messagebox.askyesno("BASELINE", "This PC is rendering farm jobs.\n\n"
+                                       "Closing BASELINE stops that (its current chunk goes back to the farm "
                                        "for another PC). Close anyway?", parent=self):
                 return
             self.pages["farm"].stop_worker()
         if self.pages["render"].has_active_jobs():
-            if not messagebox.askyesno("CORELINE", "Renders are still running or waiting.\n\n"
-                                       "Closing CORELINE stops them. Close anyway?", parent=self):
+            if not messagebox.askyesno("BASELINE", "Renders are still running or waiting.\n\n"
+                                       "Closing BASELINE stops them. Close anyway?", parent=self):
                 return
             self.pages["render"].queue.stop_all()
         self.project.mark_seen(self.user)
@@ -482,7 +482,7 @@ def main():
     except PipelineError as e:
         picker = tk.Tk()
         picker.withdraw()
-        messagebox.showerror("CORELINE", str(e), parent=picker)
+        messagebox.showerror("BASELINE", str(e), parent=picker)
         picker.destroy()
         return
     MainWindow(project, root, message).mainloop()

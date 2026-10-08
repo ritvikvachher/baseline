@@ -4,9 +4,9 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
-from coreline import greeting, settings
-from coreline.greeting import AFTERNOON, EVENING, MORNING, NIGHT, info_line, pick_greeting
-from coreline.project import Project
+from baseline import greeting, settings
+from baseline.greeting import AFTERNOON, EVENING, MORNING, NIGHT, info_line, pick_greeting
+from baseline.project import Project
 
 # A Wednesday, so the Friday rule stays out of the way unless a test asks for it.
 WED_MORNING = datetime(2026, 10, 7, 9, 30)
@@ -38,7 +38,7 @@ class GreetingTests(unittest.TestCase):
         self.assertEqual(self.greet(WED_MORNING.replace(hour=23)), "BURNING THE MIDNIGHT OIL, RITVIK")
 
     def test_visits(self):
-        self.assertEqual(self.greet(last_seen=None), "WELCOME TO CORELINE, RITVIK")
+        self.assertEqual(self.greet(last_seen=None), "WELCOME TO BASELINE, RITVIK")
         self.assertEqual(self.greet(last_seen=WED_MORNING - timedelta(hours=2)), "BACK AT IT, RITVIK")
         self.assertEqual(self.greet(last_seen=WED_MORNING - timedelta(days=3)), "WELCOME BACK, RITVIK")
 
@@ -56,7 +56,7 @@ class GreetingTests(unittest.TestCase):
         self.assertEqual(self.greet(delivery=day + timedelta(days=15)), "GOOD MORNING, RITVIK")
         self.assertEqual(self.greet(delivery=day - timedelta(days=1)), "GOOD MORNING, RITVIK")
         # First launch still wins over the countdown.
-        self.assertEqual(self.greet(last_seen=None, delivery=day), "WELCOME TO CORELINE, RITVIK")
+        self.assertEqual(self.greet(last_seen=None, delivery=day), "WELCOME TO BASELINE, RITVIK")
 
     def test_unknown_name(self):
         self.assertEqual(self.greet(name=None), "GOOD MORNING")
@@ -97,17 +97,17 @@ class NameAndVisitTests(unittest.TestCase):
             with mock.patch("getpass.getuser", return_value="s5707305"):
                 self.assertEqual(settings.first_name(), "Ritvik")
             with mock.patch("getpass.getuser", return_value="s0000000"), \
-                    mock.patch.dict("os.environ", {"CORELINE_USER": ""}), \
+                    mock.patch.dict("os.environ", {"BASELINE_USER": ""}), \
                     mock.patch.object(settings, "get_user_setting", return_value=None):
                 self.assertIsNone(settings.first_name())
 
     def test_visits_are_remembered_per_user(self):
         with tempfile.TemporaryDirectory() as tmp:
-            project = Project(Path(tmp), {"name": "T", "layout": {"tracking": "_ADMIN/coreline"}})
+            project = Project(Path(tmp), {"name": "T", "layout": {"tracking": "_ADMIN/baseline"}})
             self.assertIsNone(project.start_visit("ritvik"))
             self.assertIsInstance(project.start_visit("ritvik"), datetime)
             self.assertIsNone(project.start_visit("andrew"))
-            self.assertTrue((Path(tmp) / "_ADMIN/coreline/users/ritvik.json").is_file())
+            self.assertTrue((Path(tmp) / "_ADMIN/baseline/users/ritvik.json").is_file())
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
-  "name": "CORELINE",
+  "name": "BASELINE",
   "fps": 24,
   "resolution": [1920, 1080],
   "drive_letter": "X",
@@ -9,7 +9,7 @@
     "work": "wip",
     "publish": "published",
     "sequences": false,
-    "tracking": "_ADMIN/coreline",
+    "tracking": "_ADMIN/baseline",
     "shot_render": "render/beauty",
     "shot_folders": ["render/beauty", "render/cryptomatte", "render/depth", "render/diffuse",
                      "render/normal", "render/shadow", "render/specular"]

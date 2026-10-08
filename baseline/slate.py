@@ -90,7 +90,7 @@ def draw(slate: Path, overlay: Path, size: Tuple[int, int], title: str, subtitle
             "rows": [list(r) for r in rows], "corner_left": corner_left, "corner_right": corner_right,
             "footer": footer, "warning": warning, "logo": str(logo) if logo else "",
             "slate": str(slate), "overlay": str(overlay)}
-    with tempfile.TemporaryDirectory(prefix="coreline_slate_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="baseline_slate_") as tmp:
         spec_file = Path(tmp) / "slate.json"
         spec_file.write_text(json.dumps(spec), encoding="utf-8")
         result = powershell.run(_SCRIPT.replace("__SPEC__", powershell.quote(spec_file)))

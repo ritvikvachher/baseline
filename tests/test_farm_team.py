@@ -6,8 +6,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from coreline import apps, farm, render
-from coreline.project import Project
+from baseline import apps, farm, render
+from baseline.project import Project
 from tests.test_farm import FAKE_RENDER, TEMPLATE
 
 
@@ -114,7 +114,7 @@ class FarmChoiceTests(unittest.TestCase):
         self._tmp.cleanup()
 
     def test_mine_first_then_team(self):
-        mine = Path(self._tmp.name) / "H" / "CORELINE_farm"
+        mine = Path(self._tmp.name) / "H" / "BASELINE_farm"
         with mock.patch.object(farm.settings, "get_user_setting", lambda key, default=None: str(mine)
                                if key == "farm_folder" else default):
             farms = farm.farms_for(self.project)
@@ -123,7 +123,7 @@ class FarmChoiceTests(unittest.TestCase):
 
     def test_only_the_team_farm_without_an_h_drive(self):
         with mock.patch.object(farm.settings, "get_user_setting", lambda key, default=None: default), \
-                mock.patch.object(farm, "DEFAULT_FOLDER", "Q:/CORELINE_farm"):
+                mock.patch.object(farm, "DEFAULT_FOLDER", "Q:/BASELINE_farm"):
             farms = farm.farms_for(self.project)
         self.assertEqual([f.kind for f in farms], [farm.TEAM])
 

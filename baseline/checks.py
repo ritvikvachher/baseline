@@ -50,7 +50,7 @@ def run_checks(project: Project, app_config: dict, installations: Dict[str, list
     # 3. Which software version saved it, and is that installed here?
     app_name = apps.app_for_extension(app_config, path.suffix)
     if not app_name:
-        checks.append(Check("Software version", WARN, f"CORELINE doesn't know {path.suffix} files."))
+        checks.append(Check("Software version", WARN, f"BASELINE doesn't know {path.suffix} files."))
     else:
         label = app_config[app_name].get("label", app_name)
         version = apps.saved_version(app_config[app_name], path)

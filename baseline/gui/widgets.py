@@ -1,4 +1,4 @@
-"""Reusable pieces for the dark CORELINE look: slanted buttons, gauges, badges, panels..."""
+"""Reusable pieces for the dark BASELINE look: slanted buttons, gauges, badges, panels..."""
 from __future__ import annotations
 
 import math

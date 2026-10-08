@@ -7,8 +7,8 @@ import zlib
 from pathlib import Path
 from unittest import mock
 
-from coreline import thumbnails
-from coreline.project import PipelineError
+from baseline import thumbnails
+from baseline.project import PipelineError
 
 
 def write_png(path: Path, width: int, height: int) -> None:

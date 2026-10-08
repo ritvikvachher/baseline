@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from coreline.project import PipelineError, Project
+from baseline.project import PipelineError, Project
 
 CONFIG = {
     "name": "TEST",
@@ -96,14 +96,14 @@ class ProjectTests(unittest.TestCase):
 
     def test_context_env_without_task(self):
         env = self.project.context_env(None, None, "ritvik")
-        self.assertNotIn("CORELINE_TASK", env)
-        self.assertEqual(env["CORELINE_USER"], "ritvik")
+        self.assertNotIn("BASELINE_TASK", env)
+        self.assertEqual(env["BASELINE_USER"], "ritvik")
 
     def test_context_env_for_shot(self):
         shot = self.project.create_shot("sq010", "sh020", 1001, 1024)
         env = self.project.context_env(shot, "anim", "ritvik")
-        self.assertEqual(env["CORELINE_FRAME_START"], "1001")
-        self.assertEqual(env["CORELINE_TASK"], "anim")
+        self.assertEqual(env["BASELINE_FRAME_START"], "1001")
+        self.assertEqual(env["BASELINE_TASK"], "anim")
         self.assertEqual(env["JOB"], self.root.as_posix())
 
 

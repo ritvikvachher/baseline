@@ -2,9 +2,9 @@
 
 - config/ (next to this code): the tool's own config, e.g. which software it knows about
   and team.json (university login -> short name, and the shared project folder's name).
-- <project folder>/coreline_project.json: the film's shared settings (tasks, fps...).
+- <project folder>/baseline_project.json: the film's shared settings (tasks, fps...).
   It lives in OneDrive, so everyone gets the same one.
-- %APPDATA%/CORELINE/settings.json: this user's own settings on this computer
+- %APPDATA%/BASELINE/settings.json: this user's own settings on this computer
   (their name, where the project folder is, preferred software versions).
 """
 from __future__ import annotations
@@ -19,8 +19,8 @@ from typing import List, Optional
 
 TOOL_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = TOOL_ROOT / "config"
-PROJECT_MARKER = "coreline_project.json"
-USER_FILE = Path(os.environ.get("APPDATA") or Path.home()) / "CORELINE" / "settings.json"
+PROJECT_MARKER = "baseline_project.json"
+USER_FILE = Path(os.environ.get("APPDATA") or Path.home()) / "BASELINE" / "settings.json"
 
 # OneDrive lives at a different path for every user, e.g.
 #   C:/Users/s5707305/OneDrive - Bournemouth University   (%OneDriveCommercial%)
@@ -84,12 +84,12 @@ def team_member(login: str = None) -> Optional[dict]:
 
 def first_name(user: str = None) -> Optional[str]:
     """The first name to greet someone by, from team.json ("ritvik" -> "Ritvik").
-    With no `user`, it's whoever is logged in, or None if CORELINE only knows their login."""
+    With no `user`, it's whoever is logged in, or None if BASELINE only knows their login."""
     if user is None:
         member = team_member()
         if member:
             return member["name"].split()[0]
-        chosen = os.environ.get("CORELINE_USER") or get_user_setting("user")
+        chosen = os.environ.get("BASELINE_USER") or get_user_setting("user")
         if not chosen:
             return None
         user = sanitize_user(chosen)
@@ -102,7 +102,7 @@ def first_name(user: str = None) -> Optional[str]:
 
 def current_user() -> str:
     member = team_member()
-    name = (os.environ.get("CORELINE_USER") or get_user_setting("user")
+    name = (os.environ.get("BASELINE_USER") or get_user_setting("user")
             or (member and member["short"]) or getpass.getuser())
     return sanitize_user(name)
 
@@ -142,12 +142,12 @@ def is_project(path) -> bool:
 
 def project_root_candidates() -> List[Path]:
     candidates = []
-    if os.environ.get("CORELINE_ROOT"):
-        candidates.append(expand_path(os.environ["CORELINE_ROOT"]))
+    if os.environ.get("BASELINE_ROOT"):
+        candidates.append(expand_path(os.environ["BASELINE_ROOT"]))
     saved = get_user_setting("root")
     if saved:
         candidates.append(expand_path(saved))
-    # If this tool is stored inside the project folder (e.g. <project>/_pipeline/CORELINE),
+    # If this tool is stored inside the project folder (e.g. <project>/_pipeline/BASELINE),
     # every computer that syncs the project finds it without being told.
     candidates.extend(TOOL_ROOT.parents)
     # The team's shared Teams folder has the same name for everyone, so look for it in

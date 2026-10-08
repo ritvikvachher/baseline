@@ -1,7 +1,7 @@
 """Command-line rendering of Houdini scenes with hython, and a simple render queue.
 
 Jobs run one at a time on this computer. Each job runs hython with
-hython/render_hip.py, which reports progress back as CORELINE:: lines.
+hython/render_hip.py, which reports progress back as BASELINE:: lines.
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from typing import Callable, Dict, List, Optional
 from .project import PipelineError
 
 SCRIPT = Path(__file__).resolve().parent / "hython" / "render_hip.py"
-MARK = "CORELINE::"
+MARK = "BASELINE::"
 ALF_PROGRESS = re.compile(r"ALF_PROGRESS\s+(\d+)%")
 RES_CHOICES = [(100, "100% - final"), (75, "75%"), (50, "50% - preview"), (25, "25% - quick check")]
 _NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
@@ -39,7 +39,7 @@ class RenderNode:
 
 
 def parse_message(line: str):
-    """'CORELINE::FRAME {"frame": 3}' -> ("FRAME", {"frame": 3}); other lines -> (None, None)."""
+    """'BASELINE::FRAME {"frame": 3}' -> ("FRAME", {"frame": 3}); other lines -> (None, None)."""
     if not line.startswith(MARK):
         return None, None
     kind, _, payload = line[len(MARK):].partition(" ")

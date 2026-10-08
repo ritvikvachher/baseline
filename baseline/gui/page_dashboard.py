@@ -14,7 +14,7 @@ from .widgets import (Badge, FormDialog, Gauge, Panel, SlantButton, Stripes, Tag
 
 TASK_ORDER = {"Blocked": 0, "In progress": 1, "In review": 2, "Not started": 3, "Approved": 4}
 # Week 1 of production starts on this Monday. A project can override it with "start_date" in
-# coreline_project.json.
+# baseline_project.json.
 DEFAULT_START_DATE = "2026-09-28"
 
 

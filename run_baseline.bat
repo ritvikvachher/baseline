@@ -1,8 +1,8 @@
 @echo off
-rem Starts CORELINE. Uses the computer's Python if it has one; otherwise the Python
+rem Starts BASELINE. Uses the computer's Python if it has one; otherwise the Python
 rem that comes with Houdini, so university PCs don't need Python installed.
 setlocal
-rem pushd (not cd) so this also works from a network path like \\server\share\CORELINE.
+rem pushd (not cd) so this also works from a network path like \\server\share\BASELINE.
 pushd "%~dp0"
 rem Don't write __pycache__ into the shared tool folder.
 set "PYTHONDONTWRITEBYTECODE=1"
@@ -30,6 +30,6 @@ if not defined PY (
     exit /b 1
 )
 
-"%PY%" -m coreline
+"%PY%" -m baseline
 if errorlevel 1 pause
 popd

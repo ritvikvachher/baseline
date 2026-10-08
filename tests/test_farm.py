@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from coreline import apps, farm, render
-from coreline.project import Project
+from baseline import apps, farm, render
+from baseline.project import Project
 
 TEMPLATE = json.loads((Path(__file__).resolve().parents[1] / "config" / "project_template.json").read_text())
 
@@ -18,16 +18,16 @@ FAKE_RENDER = '''
 import json, sys
 hip, node, start, end, step = sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6])
 if "bad" in hip:
-    print('CORELINE::ERROR {"message": "Karma crashed"}', flush=True)
+    print('BASELINE::ERROR {"message": "Karma crashed"}', flush=True)
     sys.exit(1)
 frames = list(range(start, end + 1, step))
-print("CORELINE::START " + json.dumps({"total": len(frames)}), flush=True)
+print("BASELINE::START " + json.dumps({"total": len(frames)}), flush=True)
 for i, f in enumerate(frames, 1):
-    print("CORELINE::FRAME " + json.dumps({"frame": f, "index": i, "total": len(frames)}), flush=True)
-    print("CORELINE::FRAME_DONE " + json.dumps({"frame": f, "index": i, "total": len(frames), "seconds": 0}),
+    print("BASELINE::FRAME " + json.dumps({"frame": f, "index": i, "total": len(frames)}), flush=True)
+    print("BASELINE::FRAME_DONE " + json.dumps({"frame": f, "index": i, "total": len(frames), "seconds": 0}),
           flush=True)
 print("ARGS " + json.dumps(sys.argv[1:]), flush=True)
-print("CORELINE::FINISHED {}", flush=True)
+print("BASELINE::FINISHED {}", flush=True)
 '''
 
 
@@ -47,7 +47,7 @@ class ChunkTests(unittest.TestCase):
 
     def test_onedrive_folder_is_flagged(self):
         self.assertTrue(farm.is_on_onedrive(r"C:\Users\s1\OneDrive - Bournemouth University\CORE\_ADMIN\farm"))
-        self.assertFalse(farm.is_on_onedrive("H:/CORELINE_farm"))
+        self.assertFalse(farm.is_on_onedrive("H:/BASELINE_farm"))
 
 
 class FarmFolderTests(unittest.TestCase):
@@ -248,7 +248,7 @@ class WorkerTests(unittest.TestCase):
                                     hython=kw["houdini_bin"] / Path(sys.executable).name,
                                     houdini_label="21.0.729", env=dict(os.environ), log_path=kw["log_path"])
 
-        from coreline import turntable
+        from baseline import turntable
         with mock.patch.object(turntable, "farm_job", fake_farm_job):
             self._run_until(self._worker(), lambda: self.farm.status(job_id).status == "Done")
         self.assertEqual(self.farm.status(job_id).status, "Done")

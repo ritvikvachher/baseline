@@ -1,17 +1,17 @@
-"""Runs inside Maya's command-line Python (mayapy), started by CORELINE for turntables.
+"""Runs inside Maya's command-line Python (mayapy), started by BASELINE for turntables.
 
     mayapy export_geo.py <scene.ma|.mb> <out.usd> <stats.json>
 
-Exports the meshes in the OUT_CORELINE_geo set (or, without that set, every visible mesh)
+Exports the meshes in the OUT_BASELINE_geo set (or, without that set, every visible mesh)
 to USD in metres, and writes a few numbers for the turntable slate. The scene is never saved.
-Lines starting with CORELINE:: are messages for the pipeline tool.
+Lines starting with BASELINE:: are messages for the pipeline tool.
 """
 import json
 import sys
 import time
 
-MARK = "CORELINE::"
-SET_NAME = "OUT_CORELINE_geo"
+MARK = "BASELINE::"
+SET_NAME = "OUT_BASELINE_geo"
 
 
 def emit(kind, data=None):

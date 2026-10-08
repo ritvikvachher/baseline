@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from coreline import turntable
-from coreline.project import PipelineError, Project
-from coreline.render import RenderJob, RenderQueue
+from baseline import turntable
+from baseline.project import PipelineError, Project
+from baseline.render import RenderJob, RenderQueue
 
 TEMPLATE = json.loads((Path(__file__).resolve().parents[1] / "config" / "project_template.json").read_text())
 
@@ -100,7 +100,7 @@ class TurntableTests(unittest.TestCase):
         self.assertEqual(spec["context"]["notes"], "Retopo done.")
         self.assertEqual(spec["context"]["version_text"], "v001")
         self.assertEqual(Path(spec["template"]), self.template)
-        self.assertEqual(job.command()[1:4], ["-m", "coreline.turntable", str(job.spec_file)])
+        self.assertEqual(job.command()[1:4], ["-m", "baseline.turntable", str(job.spec_file)])
         self.assertEqual(job.frames_label, "Turntable · Waiting to start")
         self.assertIn(str(turntable.PACKAGE_DIR.parent), job.env["PYTHONPATH"])
 
@@ -236,9 +236,9 @@ class TurntableTests(unittest.TestCase):
     def test_queue_shows_turntable_stages(self):
         job = self.job()
         queue = RenderQueue()
-        queue._handle_line(job, 'CORELINE::STAGE {"name": "Rendering 120 frames"}')
+        queue._handle_line(job, 'BASELINE::STAGE {"name": "Rendering 120 frames"}')
         self.assertEqual(job.frames_label, "Turntable · Rendering 120 frames")
-        queue._handle_line(job, 'CORELINE::DONE {"message": "Saved cheetah_geo_v001_turntable.mp4"}')
+        queue._handle_line(job, 'BASELINE::DONE {"message": "Saved cheetah_geo_v001_turntable.mp4"}')
         self.assertEqual(job.message, "Saved cheetah_geo_v001_turntable.mp4")
         self.assertIsInstance(job, RenderJob)
 

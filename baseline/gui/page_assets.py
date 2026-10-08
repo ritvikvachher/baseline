@@ -671,7 +671,7 @@ class AssetsPage(Page):
 
     def _assign_other(self, entity, task, part=""):
         form = FormDialog(self.app, "Assign", [("name", "Name", "", None)], ok_text="Assign",
-                          intro="Use the short name they use in CORELINE, e.g. sam.")
+                          intro="Use the short name they use in BASELINE, e.g. sam.")
         if form.result and form.result["name"]:
             from ..settings import sanitize_user
             self._assign(entity, task, sanitize_user(form.result["name"]), part)

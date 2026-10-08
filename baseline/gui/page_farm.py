@@ -111,7 +111,7 @@ class FarmPage(Page):
         self.folders_box = tk.Frame(f, bg=PANEL)
         self.folders_box.pack(fill="x")
         SlantButton(f, "Change my folder...", self.change_folder, kind="ghost", height=30,
-                    tip="Your own farm's folder (H:/CORELINE_farm by default). Every PC you use must use the "
+                    tip="Your own farm's folder (H:/BASELINE_farm by default). Every PC you use must use the "
                         "same one. The team farm is always in the project.").pack(anchor="w", pady=(px(6), 0))
         separator(f).pack(fill="x", pady=px(12))
         top = tk.Frame(f, bg=PANEL)

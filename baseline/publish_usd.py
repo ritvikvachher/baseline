@@ -3,9 +3,9 @@
 Publishing a Maya file in a geo step (or a part of one: skeleton, muscle, skin) adds a job to
 the render queue that runs this file as its own process,
 
-    python -m coreline.publish_usd <spec.json>
+    python -m baseline.publish_usd <spec.json>
 
-which exports the scene with mayapy (maya/export_geo.py: the OUT_CORELINE_geo set or group if
+which exports the scene with mayapy (maya/export_geo.py: the OUT_BASELINE_geo set or group if
 there is one, else every visible mesh; metres, Y-up, UVs) to
 
     published/muscle/v002/cheetah_geo_muscle_v002.usd
@@ -38,7 +38,7 @@ class UsdExportJob(turntable.TurntableJob):
         return f"USD for Houdini · {self.stage}"
 
     def command(self) -> List[str]:
-        return [sys.executable, "-m", "coreline.publish_usd", str(self.spec_file)]
+        return [sys.executable, "-m", "baseline.publish_usd", str(self.spec_file)]
 
 
 def wants_usd(task: str, scene: Optional[Path]) -> bool:

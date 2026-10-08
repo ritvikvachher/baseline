@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from coreline import checks
-from coreline.project import PipelineError, Project
+from baseline import checks
+from baseline.project import PipelineError, Project
 
 CONFIG = {
     "name": "TEST",
@@ -74,7 +74,7 @@ class TaskStatusTests(Base):
 
 class PublishCheckTests(Base):
     def run_checks(self, workfile, installed=("21.0.729",)):
-        from coreline.apps import Installation
+        from baseline.apps import Installation
         installs = {"houdini": [Installation("houdini", "Houdini", v, Path("h.exe"), Path(".")) for v in installed]}
         return {c.name: c for c in checks.run_checks(self.project, APP_CONFIG, installs, self.hero, "model", workfile)}
 

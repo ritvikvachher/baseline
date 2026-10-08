@@ -1,4 +1,4 @@
-"""Runs inside Houdini's command-line Python (hython), started by CORELINE for turntables.
+"""Runs inside Houdini's command-line Python (hython), started by BASELINE for turntables.
 
     hython turntable_scene.py <spec.json>
 
@@ -8,7 +8,7 @@ a sensible size) a 1.8 m figure for scale. Karma (husk) then renders that scene.
 
 spec.json keys: asset_usd, scene_usd, hdri, frames, fps, resolution [w, h], focal_mm,
 elevation_deg, start_angle, margin, clay (true for the grey model look), scale_figure,
-clay_color, backdrop_color, figure_color. Lines starting with CORELINE:: are messages.
+clay_color, backdrop_color, figure_color. Lines starting with BASELINE:: are messages.
 """
 import json
 import math
@@ -16,7 +16,7 @@ import sys
 
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux, UsdRender, UsdShade
 
-MARK = "CORELINE::"
+MARK = "BASELINE::"
 FIGURE_HEIGHT = 1.8
 FIGURE_GAP = 0.35       # metres between the asset's spin circle and the figure
 FIGURE_MIN, FIGURE_MAX = 0.3, 8.0  # only show the figure for assets this size (largest side, m)
@@ -211,7 +211,7 @@ def main(argv):
         spec = json.load(f)
     try:
         build(spec)
-    except Exception as e:  # report it to CORELINE rather than as a bare traceback
+    except Exception as e:  # report it to BASELINE rather than as a bare traceback
         emit("ERROR", {"message": f"Couldn't build the turntable scene: {e}"})
         raise
     return 0

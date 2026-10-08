@@ -6,8 +6,8 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-from coreline import checks, publish_usd, turntable
-from coreline.project import PipelineError, Project
+from baseline import checks, publish_usd, turntable
+from baseline.project import PipelineError, Project
 
 TEMPLATE = json.loads((Path(__file__).resolve().parents[1] / "config" / "project_template.json").read_text())
 
@@ -119,7 +119,7 @@ class PartTests(unittest.TestCase):
         self.assertEqual(Path(spec["out_usd"]), pub.path / "cheetah_geo_muscle_v001.usd")
         self.assertEqual(Path(spec["info_file"]),
                          self.project._publish_info_file(self.cheetah, "geo", pub.path))
-        self.assertEqual(job.command()[1:3], ["-m", "coreline.publish_usd"])
+        self.assertEqual(job.command()[1:3], ["-m", "baseline.publish_usd"])
         self.assertEqual(job.frames_label, "USD for Houdini · Waiting to start")
         no_maya = SimpleNamespace(installation_for_file=lambda path: (None, None), app_config={"maya": {}}, user="x")
         self.assertIsNone(publish_usd.job_for(self.project, self.cheetah, "geo", pub, no_maya))

@@ -3,9 +3,9 @@
 There's no server. Everything goes through farm folders that the PCs can see. Only small text
 files go there; scenes and frames stay in the project. There are two farms, and workers watch both:
 
-  Mine (MINE): H:/CORELINE_farm, your own uni network drive, the same on every PC you log into.
+  Mine (MINE): H:/BASELINE_farm, your own uni network drive, the same on every PC you log into.
                Fast and exact, but only your logins see it.
-  Team (TEAM): _ADMIN/coreline/farm in the project, which OneDrive shares with the whole team.
+  Team (TEAM): _ADMIN/baseline/farm in the project, which OneDrive shares with the whole team.
                Any teammate's PC can help, but OneDrive syncs with a delay (see "synced" below).
 
     <farm>/jobs/<job id>/job.json                 what to render (written once, by the submitter)
@@ -35,7 +35,7 @@ Turntables (job "type": "turntable") go to the farm in one of two ways:
            by the PC that takes it, then the FINISH chunk, which waits until every other chunk
            is done and joins the slate and the pieces into the turntable.
 
-Run a worker without the window:  python -m coreline.farm worker
+Run a worker without the window:  python -m baseline.farm worker
 """
 from __future__ import annotations
 
@@ -56,7 +56,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 from . import apps, settings
 from .render import RenderJob, RenderQueue
 
-DEFAULT_FOLDER = "H:/CORELINE_farm"
+DEFAULT_FOLDER = "H:/BASELINE_farm"
 DEFAULT_CHUNK = 10              # frames per chunk
 HEARTBEAT_SECONDS = 30          # how often a busy worker touches its claim
 STALE_SECONDS = 10 * 60         # a claim not touched for this long belongs to a PC that went away
@@ -125,7 +125,7 @@ def is_on_onedrive(path) -> bool:
 
 
 def my_folder() -> Optional[Path]:
-    """Your own farm: the saved folder, else H:/CORELINE_farm if this PC has an H: drive, else None."""
+    """Your own farm: the saved folder, else H:/BASELINE_farm if this PC has an H: drive, else None."""
     saved = settings.get_user_setting("farm_folder")
     if saved:
         return settings.expand_path(saved)
@@ -903,12 +903,12 @@ def _duration(seconds: float) -> str:
 
 def main(argv: List[str]) -> int:
     if not argv or argv[0] != "worker":
-        print("Usage: python -m coreline.farm worker [--folder H:/CORELINE_farm]")
+        print("Usage: python -m baseline.farm worker [--folder H:/BASELINE_farm]")
         return 2
     from .gui.main_window import open_project  # also shows the project as its drive letter
     root = settings.find_project_root()
     if root is None:
-        print("CORELINE can't find the project folder. Open CORELINE once on this PC first.")
+        print("BASELINE can't find the project folder. Open BASELINE once on this PC first.")
         return 1
     project, message = open_project(root)
     if message:
@@ -919,7 +919,7 @@ def main(argv: List[str]) -> int:
     worker = FarmWorker(farms, project, settings.current_user(), found.get("houdini", []), app_cfg["houdini"],
                         on_event=lambda text: print(text, flush=True),
                         maya_installs=found.get("maya", []), maya_cfg=app_cfg.get("maya"))
-    print(f"CORELINE farm worker on {worker.pc} for {project.name}. Close this window (or press Ctrl+C) "
+    print(f"BASELINE farm worker on {worker.pc} for {project.name}. Close this window (or press Ctrl+C) "
           "to stop; a chunk being rendered goes back to the farm.", flush=True)
     _stop_on_close(worker)
     worker.start()

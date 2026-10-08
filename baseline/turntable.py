@@ -3,21 +3,21 @@
 Nothing here starts by itself: someone clicks Turntable... on an asset, and a job joins the
 render queue. The job runs this file as its own process,
 
-    python -m coreline.turntable <spec.json>
+    python -m baseline.turntable <spec.json>
 
 which takes it through the stages, each in the program that can do it:
 
-    geo (.ma/.mb):  mayapy exports the OUT_CORELINE_geo set/group to USD (maya/export_geo.py)
+    geo (.ma/.mb):  mayapy exports the OUT_BASELINE_geo set/group to USD (maya/export_geo.py)
                     hython puts it in the team's turntable template (hython/turntable_from_template.py),
                     or, with no template set, a plain studio        (hython/turntable_scene.py)
                     husk renders it with Karma (EXR frames)
                     hoiiotool turns the frames' colour into display colour (OCIO), dropping alpha
                     Windows draws the slate, Houdini's ffmpeg makes the MP4
-    lookdev (.hip): hython exports the stage at the OUT_CORELINE_lookdev node to USD, shaded
+    lookdev (.hip): hython exports the stage at the OUT_BASELINE_lookdev node to USD, shaded
                     (hython/export_lookdev.py), then the same as geo without the clay; in the
                     template the asset spins once, then the HDRI does
 
-and reports progress with CORELINE:: lines, like a normal render. The working files go in
+and reports progress with BASELINE:: lines, like a normal render. The working files go in
 the computer's temp folder (not OneDrive) and are deleted when the MP4 is saved.
 """
 from __future__ import annotations
@@ -45,13 +45,13 @@ PACKAGE_DIR = Path(__file__).resolve().parent
 SETTINGS_FILE = settings.CONFIG_DIR / "turntable.json"
 # Not %LOCALAPPDATA%: the Microsoft Store Python hides folders it makes there from other
 # programs (Maya, Houdini), and those need to read and write the job's files.
-WORK_ROOT = Path(tempfile.gettempdir()) / "coreline_turntables"
+WORK_ROOT = Path(tempfile.gettempdir()) / "baseline_turntables"
 LOGO = PACKAGE_DIR / "gui" / "assets" / "logo_2x.png"
-GEO_SET = "OUT_CORELINE_geo"
+GEO_SET = "OUT_BASELINE_geo"
 # Steps whose files are models: retopo and UVs are part of geo in this project.
 GEO_TASKS = {"geo", "model", "modelling", "modeling", "retopo", "uv", "uvs"}
 MAYA_EXTENSIONS = {".ma", ".mb"}
-LOOKDEV_NODE = "OUT_CORELINE_lookdev"
+LOOKDEV_NODE = "OUT_BASELINE_lookdev"
 # Steps whose Houdini files hold the shaded asset: texturing is done in Houdini in this project.
 LOOKDEV_TASKS = {"lookdev", "look", "lookdevelopment", "shading", "surfacing", "texturing", "texture", "textures"}
 HOUDINI_EXTENSIONS = {".hip", ".hipnc", ".hiplc"}
@@ -66,7 +66,7 @@ DEFAULTS = {
     "start_angle": 30,
     "margin": 1.1,
     # The team's Houdini turntable scene (see hython/make_turntable_template.py). Empty: use
-    # CORELINE's own plain studio instead, lit by "hdri".
+    # BASELINE's own plain studio instead, lit by "hdri".
     "template": "_ADMIN/pipeline/turntable/turntable_template.hipnc",
     "clay_material": "clay",
     "hdri": "_ADMIN/pipeline/turntable/studio_small_08_4k.exr",
@@ -167,7 +167,7 @@ class TurntableJob(RenderJob):
         return self.frames_label
 
     def command(self) -> List[str]:
-        return [sys.executable, "-m", "coreline.turntable", str(self.spec_file)]
+        return [sys.executable, "-m", "baseline.turntable", str(self.spec_file)]
 
 
 def _project_path(project: Project, value: str) -> Path:
@@ -240,7 +240,7 @@ def create_job(project: Project, entity: Entity, task: str, source: Path, publis
         if not template.is_file():
             raise PipelineError(f"The turntable template is missing:\n{template}\n\nPut the team's "
                                 f"turntable_template.hipnc there, or set \"template\" to \"\" in "
-                                f"{SETTINGS_FILE.name} to use CORELINE's plain studio.")
+                                f"{SETTINGS_FILE.name} to use BASELINE's plain studio.")
     else:
         hdri = _project_path(project, config["hdri"])
         if not hdri.is_file():
@@ -392,10 +392,10 @@ def _run(cmd, cwd, on_line=None, work_done: threading.Event = None) -> int:
     """Runs a program, passing its output on to the log. `on_line(line)` can take a line
     (return True) so it isn't passed on.
 
-    If `work_done` gets set (e.g. by on_line), CORELINE stops depending on the program: Maya with
+    If `work_done` gets set (e.g. by on_line), BASELINE stops depending on the program: Maya with
     V-Ray/Arnold loaded can hang while shutting down after the work is finished, can't always be
     killed, and helper programs it started can keep its output open after it's gone. So it's
-    closed after EXIT_GRACE_SECONDS, and LET_GO_SECONDS later CORELINE carries on regardless."""
+    closed after EXIT_GRACE_SECONDS, and LET_GO_SECONDS later BASELINE carries on regardless."""
     print(f"$ {' '.join(str(c) for c in cmd)}", flush=True)
     try:
         process = subprocess.Popen([str(c) for c in cmd], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -432,12 +432,12 @@ def _run(cmd, cwd, on_line=None, work_done: threading.Event = None) -> int:
         if closed_at is None and process.poll() is not None:
             closed_at = now  # it closed, but something still holds its output open
         if closed_at is None and now - done_at >= EXIT_GRACE_SECONDS:
-            print(f"{name} finished its work but didn't close, so CORELINE closed it.", flush=True)
+            print(f"{name} finished its work but didn't close, so BASELINE closed it.", flush=True)
             subprocess.run(["taskkill", "/T", "/F", "/PID", str(process.pid)],
                            capture_output=True, creationflags=_NO_WINDOW)
             closed_at = now
         if closed_at is not None and now - closed_at >= LET_GO_SECONDS:
-            print(f"{name}'s work is saved, so CORELINE carries on without waiting for it any longer.",
+            print(f"{name}'s work is saved, so BASELINE carries on without waiting for it any longer.",
                   flush=True)
             code = process.poll()
             return -1 if code is None else code
@@ -485,7 +485,7 @@ def _draw_slate(spec, work, stats, size):
             subtitle=f"{step.upper()} TURNTABLE  ·  {version_text}", rows=rows,
             corner_left=f"{context['entity']}  ·  {step}  ·  {version_text}  ·  {context['artist']}",
             corner_right=f"{when:%d %b %Y}",
-            footer=f"CORELINE turntable  ·  {'' if lookdev else 'Maya ' + spec['versions']['maya'] + ' → '}"
+            footer=f"BASELINE turntable  ·  {'' if lookdev else 'Maya ' + spec['versions']['maya'] + ' → '}"
                    f"Karma {config['engine'].upper()} (Houdini {spec['versions']['houdini']})  ·  "
                    f"made by {context['made_by']} on {context['computer']}",
             warning="" if stats.get("used_set") else f"No {GEO_SET} set or group in the scene, so every visible mesh was used.",
@@ -564,7 +564,7 @@ def run(spec: dict) -> int:
             raise StageFailed("Maya couldn't export the model. See the log for Maya's messages.")
     stats = json.loads(stats_file.read_text(encoding="utf-8"))
 
-    # 2. Put it in the template (or CORELINE's plain studio).
+    # 2. Put it in the template (or BASELINE's plain studio).
     _stage("Building the scene")
     if spec.get("template"):
         script = "turntable_from_template.py"

@@ -27,7 +27,7 @@ IMAGE_FILETYPES = [("Images", "*.png *.jpg *.jpeg *.gif *.bmp *.tif *.tiff"), ("
 # The copy kept in the project is shrunk to this many pixels on its longest side; plenty for
 # the biggest place it's shown, and small enough that OneDrive syncs it quickly.
 STORED_SIZE = 1280
-CACHE_DIR = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "CORELINE" / "thumbs"
+CACHE_DIR = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "BASELINE" / "thumbs"
 
 # A job is (source, destination, width, height, mode). "cover" fills width x height exactly,
 # cropping the edges like a CSS background; "fit" shrinks (never enlarges) to fit inside it.
@@ -120,7 +120,7 @@ def resize(jobs: List[Job]) -> Dict[Path, str]:
     if not jobs:
         return {}
     errors: Dict[Path, str] = {}
-    with tempfile.TemporaryDirectory(prefix="coreline_thumbs_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="baseline_thumbs_") as tmp:
         tmp = Path(tmp)
         temps = [tmp / f"{i}{Path(dst).suffix.lower()}" for i, (_s, dst, _w, _h, _m) in enumerate(jobs)]
         spec = [{"src": str(src), "dst": str(t), "w": int(w), "h": int(h), "mode": mode}

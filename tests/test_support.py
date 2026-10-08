@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from coreline import apps, drives, settings
-from coreline.render import RenderJob, RenderQueue, parse_message
+from baseline import apps, drives, settings
+from baseline.render import RenderJob, RenderQueue, parse_message
 
 HOUDINI_CFG = {
     "label": "Houdini",
@@ -101,8 +101,8 @@ class DriveTests(unittest.TestCase):
 
 class RenderMessageTests(unittest.TestCase):
     def test_parse_message(self):
-        self.assertEqual(parse_message('CORELINE::FRAME {"frame": 3}'), ("FRAME", {"frame": 3}))
-        self.assertEqual(parse_message("CORELINE::FINISHED {}"), ("FINISHED", {}))
+        self.assertEqual(parse_message('BASELINE::FRAME {"frame": 3}'), ("FRAME", {"frame": 3}))
+        self.assertEqual(parse_message("BASELINE::FINISHED {}"), ("FINISHED", {}))
         self.assertEqual(parse_message("Karma: 50% done"), (None, None))
 
 
@@ -124,9 +124,9 @@ class RenderJobTests(unittest.TestCase):
     def test_progress_from_karma_output(self):
         queue, job = RenderQueue(), self._job(res_percent=25)
         job.status = "Rendering"
-        for line in ['CORELINE::START {"total": 10}',
-                     'CORELINE::FRAME_SKIPPED {"frame": 1001, "index": 1, "total": 10}',
-                     'CORELINE::FRAME {"frame": 1002, "index": 2, "total": 10}',
+        for line in ['BASELINE::START {"total": 10}',
+                     'BASELINE::FRAME_SKIPPED {"frame": 1001, "index": 1, "total": 10}',
+                     'BASELINE::FRAME {"frame": 1002, "index": 2, "total": 10}',
                      "ALF_PROGRESS 42%"]:
             queue._handle_line(job, line)
         self.assertEqual(job.progress_label, "1/10, frame 1002 42% (1 skipped)")

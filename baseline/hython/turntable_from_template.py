@@ -1,4 +1,4 @@
-"""Runs inside Houdini's command-line Python (hython), started by CORELINE for turntables.
+"""Runs inside Houdini's command-line Python (hython), started by BASELINE for turntables.
 
     hython turntable_from_template.py <spec.json>
 
@@ -7,8 +7,8 @@ for Karma (husk) to render:
 
   1. writes a small USD "wrapper" around the asset: standing on the ground at the origin,
      spinning once over the turntable's frames;
-  2. opens the template with $CORELINE_ASSET pointing at that wrapper;
-  3. takes the stage arriving at OUT_CORELINE_turntable and, on a copy of it, moves the
+  2. opens the template with $BASELINE_ASSET pointing at that wrapper;
+  3. takes the stage arriving at OUT_BASELINE_turntable and, on a copy of it, moves the
      camera prim turntable_cam nearer or further (keeping its lens and angle) so the
      asset fits, and puts the clay material on the asset for geo turntables;
   4. for lookdev (hdri_spin_frames), holds the asset still afterwards and turns the template's
@@ -28,7 +28,7 @@ from pxr import Gf, Usd, UsdGeom, UsdShade
 
 from turntable_scene import asset_bounds, bind, emit, preview_material
 
-OUT_NODE = "OUT_CORELINE_turntable"
+OUT_NODE = "OUT_BASELINE_turntable"
 CAMERA_NAME = "turntable_cam"
 ASSET_PRIM = "turntable_asset"
 
@@ -100,7 +100,7 @@ def frame_camera(stage, camera_prim, asset_prim, size, margin):
     parent = cache.GetParentToWorldTransform(camera_prim)
     xformable = UsdGeom.Xformable(camera_prim)
     xformable.ClearXformOpOrder()
-    xformable.AddTransformOp(opSuffix="coreline").Set(new_world * parent.GetInverse())
+    xformable.AddTransformOp(opSuffix="baseline").Set(new_world * parent.GetInverse())
     near, far = camera.GetClippingRangeAttr().Get() or (0.1, 1000.0)
     camera.CreateClippingRangeAttr(Gf.Vec2f(min(near, 0.01), max(far, distance * 20)))
     return distance
@@ -110,7 +110,7 @@ def spin_domes(stage, start, frames):
     """Turns every dome light once about Y over `frames` frames from `start`."""
     domes = [p for p in stage.Traverse() if p.GetTypeName().startswith("DomeLight")]
     for dome in domes:
-        rotate = UsdGeom.Xformable(dome).AddRotateYOp(opSuffix="coreline_spin")
+        rotate = UsdGeom.Xformable(dome).AddRotateYOp(opSuffix="baseline_spin")
         rotate.Set(0.0, 1)
         for frame in range(start, start + frames + 1):
             rotate.Set(360.0 * (frame - start) / frames, frame)
@@ -122,7 +122,7 @@ def build(spec):
     size = high - low
     write_wrapper(spec, low, high)
 
-    hou.putenv("CORELINE_ASSET", spec["wrapper_usd"].replace("\\", "/"))
+    hou.putenv("BASELINE_ASSET", spec["wrapper_usd"].replace("\\", "/"))
     try:
         hou.hipFile.load(spec["template"], suppress_save_prompt=True, ignore_load_warnings=True)
     except hou.LoadWarning as e:
@@ -143,7 +143,7 @@ def build(spec):
     asset = find_prim(stage, ASSET_PRIM)
     if asset is None:
         raise RuntimeError(f"The asset isn't in the template's scene: is the {ASSET_PRIM} reference "
-                           "($CORELINE_ASSET) connected to the rest?")
+                           "($BASELINE_ASSET) connected to the rest?")
     camera = find_prim(stage, CAMERA_NAME, UsdGeom.Camera)
     if camera is None:
         raise RuntimeError(f"The template has no camera called {CAMERA_NAME}.")
@@ -152,7 +152,7 @@ def build(spec):
     if spec.get("clay"):
         clay = find_prim(stage, spec.get("clay_material", "clay"), UsdShade.Material)
         material = UsdShade.Material(clay) if clay else preview_material(
-            stage, "/coreline_looks/clay", (0.5, 0.5, 0.5), 0.55)
+            stage, "/baseline_looks/clay", (0.5, 0.5, 0.5), 0.55)
         if not clay:
             emit("WARNING", {"message": "The template has no 'clay' material; using a plain grey one."})
         bind(asset, material, stronger=True)

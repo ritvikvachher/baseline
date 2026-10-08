@@ -1,10 +1,10 @@
-"""Runs inside Houdini's command-line Python (hython), started by CORELINE.
+"""Runs inside Houdini's command-line Python (hython), started by BASELINE.
 
     hython render_hip.py list   <scene.hip>
     hython render_hip.py render <scene.hip> <node path> <start> <end> <step> [--res 50] [--skip-existing]
                                 [--output X:/shots/SH010/render/beauty/name/name.$F4.exr]
 
-Lines starting with CORELINE:: are messages for the pipeline tool; everything
+Lines starting with BASELINE:: are messages for the pipeline tool; everything
 else is Houdini's normal output and goes into the render log. Changes made to
 the scene here (e.g. resolution) are never saved.
 """
@@ -15,7 +15,7 @@ import time
 
 import hou
 
-MARK = "CORELINE::"
+MARK = "BASELINE::"
 OUTPUT_PARMS = ("picture", "vm_picture", "outputimage", "sopoutput", "lopoutput", "filename",
                 "file", "RS_outputFileNamePrefix", "ar_picture")
 # Where Karma nodes (/out) and USD Render nodes (/stage) take their output image.
@@ -107,7 +107,7 @@ def _set(node, name, value):
 
 def apply_karma_options(node, res_percent):
     """Resolution override and per-frame progress for Karma / USD Render nodes."""
-    # Karma prints "ALF_PROGRESS 42%" while rendering, which CORELINE shows per frame.
+    # Karma prints "ALF_PROGRESS 42%" while rendering, which BASELINE shows per frame.
     _set(node, "alfprogress", 1)
     if res_percent == 100:
         return

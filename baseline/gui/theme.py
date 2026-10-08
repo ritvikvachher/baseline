@@ -1,4 +1,4 @@
-"""Colours, fonts and ttk styling for the dark CORELINE look."""
+"""Colours, fonts and ttk styling for the dark BASELINE look."""
 from __future__ import annotations
 
 import tkinter as tk

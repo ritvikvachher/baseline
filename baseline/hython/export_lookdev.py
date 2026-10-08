@@ -1,8 +1,8 @@
-"""Runs inside Houdini's command-line Python (hython), started by CORELINE for lookdev turntables.
+"""Runs inside Houdini's command-line Python (hython), started by BASELINE for lookdev turntables.
 
     hython export_lookdev.py <scene.hip> <out.usd> <stats.json>
 
-Opens the lookdev scene and saves the stage arriving at the node called OUT_CORELINE_lookdev
+Opens the lookdev scene and saves the stage arriving at the node called OUT_BASELINE_lookdev
 (any LOP, e.g. the scene's Karma Render Settings; for a USD Render node, what comes into it)
 as one USD file holding just the shaded asset: geometry and materials, all under /asset.
 The scene's own cameras, lights and render settings are left out, since the turntable
@@ -15,8 +15,8 @@ import time
 import hou
 from pxr import Sdf, Usd, UsdGeom, UsdLux, UsdRender
 
-OUT_NODE = "OUT_CORELINE_lookdev"
-MARK = "CORELINE::"
+OUT_NODE = "OUT_BASELINE_lookdev"
+MARK = "BASELINE::"
 
 
 def emit(kind, data=None):

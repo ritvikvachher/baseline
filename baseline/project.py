@@ -1,6 +1,6 @@
 """The project on disk: assets, shots, workfiles and publishes.
 
-Folder names come from the "layout" section of coreline_project.json, e.g.
+Folder names come from the "layout" section of baseline_project.json, e.g.
 
     assets/<type>/<name>/<task>/wip/<name>_<task>_v001_<user>.hip
     assets/<type>/<name>/<task>/published/v001/<name>_<task>_v001.hip
@@ -11,9 +11,9 @@ folder inside that with a work or publish folder is one of its tasks, so folders
 made by hand in Explorer show up too.
 
 Tracking data (status, assignee, frame ranges, publish notes) goes under
-"tracking" (e.g. _ADMIN/coreline), mirroring the asset/shot paths, so the
+"tracking" (e.g. _ADMIN/baseline), mirroring the asset/shot paths, so the
 artists' folders only hold their files. Projects without a "layout" use
-CORELINE's original layout: work/, publish/, sequences, and tracking files
+BASELINE's original layout: work/, publish/, sequences, and tracking files
 next to the work.
 
 Workfiles are private and versioned; publishes are numbered, read-only copies
@@ -32,7 +32,7 @@ from typing import Dict, List, Optional, Tuple
 
 NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
 PUBLISH_DIR_RE = re.compile(r"^v(\d{3,})$")
-PROJECT_MARKER = "coreline_project.json"
+PROJECT_MARKER = "baseline_project.json"
 ENTITY_FILE = "entity.json"
 TASK_FILE = "task.json"
 
@@ -42,14 +42,14 @@ STATUS_PROGRESS = {"Not started": 0.0, "In progress": 0.4, "Blocked": 0.4, "In r
 PUBLISH_FILE = "publish.json"
 KIND_FOLDERS = {"asset": "assets", "shot": "shots"}  # kind -> its key in the layout
 
-DEFAULT_LAYOUT = {           # CORELINE's original layout
+DEFAULT_LAYOUT = {           # BASELINE's original layout
     "assets": "assets",
     "shots": "shots",
     "work": "work",
     "publish": "publish",
     "sequences": True,       # shots/<sequence>/<shot> rather than shots/<shot>
     "tracking": "",          # "" = next to the work (<task>/task.json)
-    "shot_render": "",       # e.g. "render/beauty": where CORELINE sends a shot's renders
+    "shot_render": "",       # e.g. "render/beauty": where BASELINE sends a shot's renders
     "shot_folders": [],      # extra folders made with each new shot, e.g. "render/depth"
 }
 # Files in a work folder that count as scenes (the project can override this list).
@@ -158,11 +158,11 @@ def _mtime(path: Path) -> float:
 class Project:
     def __init__(self, root, config: dict = None):
         """`root` is how this computer reaches the project (e.g. X:/), `config` defaults
-        to the project's own coreline_project.json."""
+        to the project's own baseline_project.json."""
         self.root = Path(root)
         self.config = config if config is not None else _read_json(self.root / PROJECT_MARKER)
         if not self.config:
-            raise PipelineError(f"{self.root} is not a CORELINE project (no {PROJECT_MARKER}).")
+            raise PipelineError(f"{self.root} is not a BASELINE project (no {PROJECT_MARKER}).")
         self.name = self.config.get("name", self.root.name)
         self.layout = dict(DEFAULT_LAYOUT, **self.config.get("layout", {}))
         tracking = self.layout["tracking"]
@@ -170,7 +170,7 @@ class Project:
 
     @classmethod
     def create(cls, root, template: dict, name: str = "") -> "Project":
-        """Turn a folder into a CORELINE project. Existing files are left alone."""
+        """Turn a folder into a BASELINE project. Existing files are left alone."""
         root = Path(root)
         config = dict(template, name=name or root.name)
         root.mkdir(parents=True, exist_ok=True)
@@ -180,7 +180,7 @@ class Project:
         return project
 
     def save_config(self, **changes) -> None:
-        """Update the shared coreline_project.json (e.g. the delivery date)."""
+        """Update the shared baseline_project.json (e.g. the delivery date)."""
         self.config.update(changes)
         _write_json(self.root / PROJECT_MARKER, self.config)
 
@@ -189,7 +189,7 @@ class Project:
         return (self.tracking_root or self.root) / "logs"
 
     # --- Visits -----------------------------------------------------------
-    # When each person last had CORELINE open, for the dashboard greeting. Kept with the
+    # When each person last had BASELINE open, for the dashboard greeting. Kept with the
     # project rather than in %APPDATA% so it follows people between lab PCs; one file each
     # so OneDrive never has two people editing the same file.
 
@@ -197,7 +197,7 @@ class Project:
         return (self.tracking_root or self.root) / "users" / f"{user}.json"
 
     def start_visit(self, user: str) -> Optional[datetime]:
-        """Record that `user` has CORELINE open now; returns when they last did (None = never)."""
+        """Record that `user` has BASELINE open now; returns when they last did (None = never)."""
         try:
             last = datetime.fromisoformat(_read_json(self._visit_file(user))["last_seen"])
         except (KeyError, TypeError, ValueError, OSError):
@@ -209,7 +209,7 @@ class Project:
         try:
             _write_json(self._visit_file(user), {"last_seen": _now()})
         except OSError:
-            pass  # a read-only or offline project shouldn't stop CORELINE opening
+            pass  # a read-only or offline project shouldn't stop BASELINE opening
 
     @property
     def uses_sequences(self) -> bool:
@@ -360,7 +360,7 @@ class Project:
         return entity.path / folder if entity.kind == "shot" and folder else None
 
     def render_output(self, entity: Optional[Entity], scene: Path) -> Optional[str]:
-        """Where CORELINE sends a shot's renders, one folder per scene version:
+        """Where BASELINE sends a shot's renders, one folder per scene version:
         <shot>/render/beauty/<scene name>/<scene name>.$F4.exr. None if the project doesn't set it."""
         folder = self.shot_render_dir(entity) if entity else None
         if folder is None:
@@ -376,7 +376,7 @@ class Project:
         return entity.path / task / self.layout["publish"]
 
     def list_workfiles(self, entity: Entity, task: str, part: Optional[str] = None) -> List[Workfile]:
-        """Every scene file in the work folder, oldest version first. Files named by CORELINE
+        """Every scene file in the work folder, oldest version first. Files named by BASELINE
         (hero_model_v003_ritvik.hip, or hero_model_muscle_v003_ritvik.ma for a part) carry their
         version, artist and part; others are listed too. `part` keeps only that part's files
         ("" = files that aren't in a part); None keeps everything."""
@@ -584,23 +584,23 @@ class Project:
         """Environment variables handed to Houdini/Maya/... so tools inside know the context.
         Without an entity and task, only the project-wide ones are set."""
         env = {
-            "CORELINE_ROOT": str(self.root),
-            "CORELINE_PROJECT": self.name,
-            "CORELINE_USER": user,
-            "CORELINE_FPS": str(self.config.get("fps", 24)),
+            "BASELINE_ROOT": str(self.root),
+            "BASELINE_PROJECT": self.name,
+            "BASELINE_USER": user,
+            "BASELINE_FPS": str(self.config.get("fps", 24)),
             "JOB": self.root.as_posix().rstrip("/"),  # Houdini's project variable: $JOB/assets -> X:/assets
         }
         if entity is None or task is None:
             return env
         env.update({
-            "CORELINE_KIND": entity.kind,
-            "CORELINE_GROUP": entity.group,
-            "CORELINE_ENTITY": entity.name,
-            "CORELINE_TASK": task,
-            "CORELINE_WORKDIR": str(self.work_dir(entity, task)),
+            "BASELINE_KIND": entity.kind,
+            "BASELINE_GROUP": entity.group,
+            "BASELINE_ENTITY": entity.name,
+            "BASELINE_TASK": task,
+            "BASELINE_WORKDIR": str(self.work_dir(entity, task)),
         })
         if entity.kind == "shot":
             frames = self.frame_range(entity)
-            env["CORELINE_FRAME_START"] = str(frames[0]) if frames else ""
-            env["CORELINE_FRAME_END"] = str(frames[1]) if frames else ""
+            env["BASELINE_FRAME_START"] = str(frames[0]) if frames else ""
+            env["BASELINE_FRAME_END"] = str(frames[1]) if frames else ""
         return env
