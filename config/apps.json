@@ -1,0 +1,71 @@
+{
+  "houdini": {
+    "label": "Houdini",
+    "exe": "bin/houdini.exe",
+    "extensions": [".hip", ".hipnc", ".hiplc"],
+    "registry": [
+      {"key": "SOFTWARE\\Side Effects Software\\Houdini", "mode": "values"}
+    ],
+    "paths": [
+      "C:/Program Files/Side Effects Software/Houdini [0-9]*/bin/houdini.exe",
+      "D:/Program Files/Side Effects Software/Houdini [0-9]*/bin/houdini.exe"
+    ],
+    "version_regex": "Houdini (\\d+\\.\\d+\\.\\d+)",
+    "file_version_regex": "_HIP_SAVEVERSION = '([\\d.]+)'",
+    "args": [],
+    "open_args": ["{file}"],
+    "tools": {"hython": "bin/hython.exe", "husk": "bin/husk.exe", "hffmpeg": "bin/hffmpeg.exe"}
+  },
+  "maya": {
+    "label": "Maya",
+    "exe": "bin/maya.exe",
+    "extensions": [".ma", ".mb"],
+    "registry": [
+      {"key": "SOFTWARE\\Autodesk\\Maya", "mode": "subkeys",
+       "subpath": "Setup\\InstallPath", "value": "MAYA_INSTALL_LOCATION"}
+    ],
+    "paths": [
+      "C:/Program Files/Autodesk/Maya20*/bin/maya.exe",
+      "C:/Autodesk/Maya20*/bin/maya.exe"
+    ],
+    "version_regex": "Maya(\\d{4})",
+    "file_version_regex": "requires maya \"(\\d{4})",
+    "args": [],
+    "open_args": ["-file", "{file}"],
+    "tools": {"mayapy": "bin/mayapy.exe"}
+  },
+  "nuke": {
+    "label": "Nuke",
+    "extensions": [".nk"],
+    "paths": [
+      "C:/Program Files/Nuke[0-9]*/Nuke[0-9]*.exe",
+      "D:/Program Files/Nuke[0-9]*/Nuke[0-9]*.exe"
+    ],
+    "version_regex": "Nuke(\\d+\\.\\d+v\\d+)",
+    "args": [],
+    "open_args": ["{file}"]
+  },
+  "substance_painter": {
+    "label": "Substance Painter",
+    "exe": "Adobe Substance 3D Painter.exe",
+    "extensions": [".spp"],
+    "paths": [
+      "C:/Program Files/Adobe/Adobe Substance 3D Painter*/Adobe Substance 3D Painter.exe",
+      "C:/Program Files/Allegorithmic/Substance Painter/Substance Painter.exe"
+    ],
+    "args": [],
+    "open_args": ["{file}"]
+  },
+  "zbrush": {
+    "label": "ZBrush",
+    "exe": "ZBrush.exe",
+    "extensions": [".zpr", ".ztl"],
+    "paths": [
+      "C:/Program Files/Maxon ZBrush 20*/ZBrush.exe",
+      "C:/Program Files/Pixologic/ZBrush 20*/ZBrush.exe"
+    ],
+    "version_regex": "ZBrush (\\d{4}(?:\\.\\d+)?)",
+    "args": [],
+    "open_args": ["{file}"]
+  }
+}

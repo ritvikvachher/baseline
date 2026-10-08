@@ -1,0 +1,39 @@
+{
+  "frames": 120,
+  "fps": 24,
+  "resolution": [
+    1280,
+    720
+  ],
+  "samples": 64,
+  "engine": "xpu",
+  "focal_mm": 50,
+  "elevation_deg": 12,
+  "start_angle": 30,
+  "margin": 1.1,
+  "template": "_ADMIN/pipeline/turntable/turntable_template.hipnc",
+  "clay_material": "clay",
+  "hdri": "_ADMIN/pipeline/turntable/studio_small_08_4k.exr",
+  "hdri_intensity": 1.0,
+  "scale_figure": true,
+  "clay_color": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "backdrop_color": [
+    0.18,
+    0.18,
+    0.19
+  ],
+  "figure_color": [
+    0.08,
+    0.08,
+    0.09
+  ],
+  "slate_seconds": 1,
+  "bitrate": "8M",
+  "ocio_config": "S:/tools/OCIO/BU_config.ocio",
+  "display": "",
+  "view": ""
+}

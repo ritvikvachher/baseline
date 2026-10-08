@@ -1,0 +1,22 @@
+{
+  "name": "CORELINE",
+  "fps": 24,
+  "resolution": [1920, 1080],
+  "drive_letter": "X",
+  "layout": {
+    "assets": "assets",
+    "shots": "shots",
+    "work": "wip",
+    "publish": "published",
+    "sequences": false,
+    "tracking": "_ADMIN/coreline",
+    "shot_render": "render/beauty",
+    "shot_folders": ["render/beauty", "render/cryptomatte", "render/depth", "render/diffuse",
+                     "render/normal", "render/shadow", "render/specular"]
+  },
+  "asset_types": ["characters", "environments", "vehicles"],
+  "tasks": {
+    "asset": ["geo", "rig", "textures", "lookdev", "groom"],
+    "shot": ["anim", "cfx", "fx", "lighting", "comp"]
+  }
+}
